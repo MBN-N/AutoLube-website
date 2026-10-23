@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auto Lube · Lucas Oil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400;0,62..125,600;0,62..125,800;1,62..125,800;1,62..125,900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#D50632;--red2:#E8173F;--blue:#2E3192;--blue2:#3D41B8;--white:#F5F4F2;
+  --bg:#FFFFFF;--bg2:#F4F4F4;--line:rgba(20,20,22,.12);--ink:#141416;--mute:#66646C;
+  --disp:'Archivo',sans-serif;--body:'Inter',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#FFFFFF}}
+:root[data-theme="dark"]{--bg:#FFFFFF}
+html[dir="rtl"]{--disp:'IBM Plex Sans Arabic',sans-serif;--body:'IBM Plex Sans Arabic',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--red);color:#fff}
+body::after{content:"";position:fixed;inset:-50%;pointer-events:none;z-index:90;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}100%{transform:translate(1%,3%)}}
+
+/* type helpers */
+.disp{font-family:var(--disp);font-style:italic;font-weight:900;font-stretch:88%;text-transform:uppercase;letter-spacing:-.01em;line-height:.88}
+html[dir="rtl"] .disp{font-style:normal;font-weight:700;line-height:1.2;text-transform:none;letter-spacing:0}
+.eyebrow{font:600 11px/1 var(--body);letter-spacing:.38em;text-transform:uppercase;color:var(--red2);display:flex;gap:14px;align-items:center}
+html[dir="rtl"] .eyebrow{letter-spacing:0;font-size:14px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--red);transform:skewX(-30deg)}
+.lead{font:400 clamp(15px,1.2vw,18px)/1.75 var(--body);color:var(--mute);max-width:560px}
+.slash{display:inline-block;width:10px;height:1em;background:var(--red);transform:skewX(-20deg);margin:0 .25em;vertical-align:-.1em}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);overflow:hidden}
+#loader .st{position:absolute;top:-20%;bottom:-20%;width:34vw;transform:skewX(-18deg)}
+#loader .s1{background:var(--red);left:-40vw}#loader .s2{background:var(--white);left:-40vw}#loader .s3{background:var(--blue);left:-40vw}
+#loader img{width:150px;position:relative;z-index:2;opacity:0}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px clamp(16px,4vw,48px);transition:background .4s}
+nav.solid{background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:14px}.brand .al{height:30px}.brand .sep{width:1px;height:24px;background:var(--line)}.brand .lc{height:34px}
+nav ul{display:flex;gap:28px;list-style:none}
+nav ul a{font:600 11px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);transition:color .3s}
+html[dir="rtl"] nav ul a{letter-spacing:0;font-size:14px}
+nav ul a:hover{color:var(--ink)}
+.navr{display:flex;gap:10px;align-items:center}
+.lang{background:none;border:1px solid var(--line);color:var(--ink);font:600 12px var(--body);padding:9px 14px;border-radius:2px;cursor:pointer}
+.lang:hover{border-color:var(--red)}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:#fff;font:700 11px/1 var(--body);letter-spacing:.18em;text-transform:uppercase;padding:14px 22px;border:0;cursor:pointer;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transition:background .3s,transform .3s}
+html[dir="rtl"] .cta{letter-spacing:0;font-size:14px}
+.cta:hover{background:var(--red2);transform:translateY(-2px)}
+.cta.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(20,20,22,.35)}.cta.ghost:hover{color:#fff}
+@media(max-width:960px){nav ul{display:none}.navr .cta{display:none}}
+
+section{position:relative;padding:clamp(90px,13vh,150px) clamp(16px,6vw,96px)}
+
+/* HERO */
+#hero{height:100vh;min-height:680px;padding:0;overflow:hidden;background:radial-gradient(ellipse 60% 55% at 50% 40%,#ffffff 0%,#f7f7f7 55%,#ececec 100%)}
+.beam{position:absolute;left:50%;top:-10%;width:70vw;height:95%;transform:translateX(-50%);background:conic-gradient(from 180deg at 50% 0%,transparent 160deg,rgba(255,255,255,.55) 175deg,rgba(255,255,255,.85) 180deg,rgba(255,255,255,.55) 185deg,transparent 200deg);filter:blur(8px);pointer-events:none;opacity:0}
+.word{position:absolute;left:0;right:0;top:11vh;text-align:center;font-size:clamp(38px,11vw,210px);line-height:.9;white-space:nowrap;direction:ltr;unicode-bidi:isolate;pointer-events:none}
+.word .o{color:transparent;-webkit-text-stroke:1.5px rgba(20,20,22,.16)}
+.word .f{position:absolute;inset:0;color:var(--red);clip-path:inset(0 100% 0 0)}
+html[dir="rtl"] .word{font-family:'Archivo',sans-serif;font-style:italic;font-weight:900;line-height:.9;top:11vh;text-transform:uppercase}
+html[dir="rtl"] #finale h2{font-family:'Archivo',sans-serif;font-style:italic;font-weight:900;text-transform:uppercase;line-height:.9}
+.stage{position:absolute;left:50%;bottom:17vh;transform:translateX(-50%);display:flex;align-items:flex-end;gap:clamp(6px,1.6vw,26px);perspective:900px}
+.bot{position:relative;will-change:transform;flex:none}
+.bot img{height:var(--h);width:auto;max-width:none;filter:drop-shadow(0 30px 34px rgba(0,0,0,.28))}
+.bot .rf{position:absolute;top:100%;left:0;transform:scaleY(-1);opacity:.22;-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 35%);mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 35%);filter:blur(1px)}
+.floor{position:absolute;left:0;right:0;bottom:0;height:17vh;background:linear-gradient(180deg,rgba(0,0,0,.035),transparent 40%),linear-gradient(0deg,#efefef,transparent);border-top:1px solid rgba(0,0,0,.07)}
+.hero-bot{position:absolute;left:0;right:0;bottom:0;padding:0 clamp(16px,4vw,48px) 4vh;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;z-index:3}
+.hero-bot .lead{max-width:430px;font-size:14px}
+.hero-bot .k{font:600 10px/1.6 var(--body);letter-spacing:.32em;text-transform:uppercase;color:var(--mute)}
+html[dir="rtl"] .hero-bot .k{letter-spacing:0;font-size:13px}
+.hero-stripe{position:absolute;bottom:0;left:0;right:0;height:6px;display:flex;z-index:4}
+.hero-stripe i{flex:1}.hero-stripe i:nth-child(1){background:var(--red)}.hero-stripe i:nth-child(2){background:var(--white);flex:.4}.hero-stripe i:nth-child(3){background:var(--blue)}
+@media(max-width:760px){.stage .bot:first-child,.stage .bot:last-child{display:none}.hero-bot{flex-direction:column;align-items:flex-start}.hero-bot .k{display:none}.stage{bottom:24vh}.floor{height:24vh}}
+
+/* MANIFESTO */
+#manifesto{min-height:110vh;display:flex;align-items:center}
+#mtext{font:600 clamp(28px,4.2vw,66px)/1.12 var(--disp);font-stretch:92%;max-width:1200px;letter-spacing:-.01em}
+html[dir="rtl"] #mtext{line-height:1.55}
+#mtext .w{opacity:.13}
+#mtext em{font-style:italic;color:var(--red2)}
+
+/* FULL-BLEED CINEMA */
+.cinema{height:180vh;padding:0;color:#fff}.cinema .lead{color:#d8d6dc}
+.cinema .pin{position:sticky;top:0;height:100vh;overflow:hidden}
+.cinema .ph{position:absolute;inset:0;background-size:cover;background-position:center;filter:contrast(1.12) saturate(1.05) brightness(.62)}
+.cinema .ph::after{content:"";position:absolute;inset:0}
+.cinema .shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.85) 100%),linear-gradient(0deg,rgba(10,10,12,1),transparent 40%)}
+.cinema .txt{position:absolute;left:clamp(16px,6vw,96px);right:clamp(16px,6vw,96px);bottom:12vh}
+html[dir="rtl"] .cinema .txt{text-align:right}
+.cinema h2{font-size:clamp(54px,10vw,170px);margin:20px 0}
+.cinema h2 .r{color:var(--red2)}
+
+
+/* ABOUT */
+#about{border-top:1px solid var(--line)}
+.about-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(30px,6vw,100px);align-items:start}
+.about-year{font-family:'Archivo',sans-serif;font-style:italic;font-weight:900;font-size:clamp(90px,15vw,230px);line-height:.82;color:transparent;-webkit-text-stroke:2px var(--red);margin-top:18px;letter-spacing:-.02em}
+.about-cap{font:600 12px var(--body);letter-spacing:.3em;text-transform:uppercase;color:var(--mute);margin-top:14px}
+html[dir="rtl"] .about-cap{letter-spacing:0;font-size:14px}
+.about-body p{font:400 clamp(16px,1.25vw,19px)/1.8 var(--body);color:#3a383f;margin-bottom:18px}
+.about-body p b{color:var(--ink)}
+.chain{margin-top:34px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+.chain>div{background:var(--bg);padding:18px 22px;display:grid;grid-template-columns:42px 1fr;gap:14px;align-items:baseline}
+.chain b{font:italic 900 20px 'Archivo',sans-serif;color:var(--red)}
+.chain h4{font:700 16px var(--body);margin-bottom:4px}
+.chain p{font-size:14px;color:var(--mute);line-height:1.55;margin:0}
+.stats{margin-top:60px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats div{padding:28px 20px;border-inline-end:1px solid var(--line)}
+.stats div:last-child{border-inline-end:0}
+.stats strong{display:block;font-family:'Archivo',sans-serif;font-style:italic;font-weight:900;font-size:clamp(38px,4.5vw,64px);line-height:1;color:var(--ink)}
+.stats span{display:block;margin-top:10px;font:600 11px var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+html[dir="rtl"] .stats span{letter-spacing:0;font-size:14px}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-inline-end:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+/* SERVICES */
+.svc-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:60px}
+.h2{font-size:clamp(46px,7.5vw,120px);margin-top:22px}
+.chapter{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(30px,5vw,90px);align-items:center;padding:9vh 0;border-top:1px solid var(--line)}
+.chapter:nth-child(even) .media{order:2}
+.media{position:relative;overflow:hidden}
+.media:not(.prod){aspect-ratio:3/4;width:min(100%,calc(74vh * .75));justify-self:center;background:#111;box-shadow:0 30px 60px -30px rgba(0,0,0,.45)}
+.media:not(.prod)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--red);z-index:2}
+.media.duo .mi{position:absolute;inset:0;animation:duo 8s ease-in-out infinite}
+.media.duo .mi+.mi{animation-delay:-4s}
+@keyframes duo{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
+.media .mi{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+.cnum{display:block;font-size:clamp(54px,6vw,96px);color:transparent;-webkit-text-stroke:1.5px var(--red);font-family:'Archivo',sans-serif;font-style:italic;font-weight:900}
+.chapter.noimg{grid-template-columns:1fr}.chapter.noimg ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));column-gap:40px}
+.media.prod{aspect-ratio:4/5;background:radial-gradient(ellipse 70% 60% at 50% 45%,#ffffff,#f3f3f3 80%);border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center}
+.media.prod::before{content:"";position:absolute;left:12%;right:12%;bottom:11%;height:5%;border-radius:50%;background:radial-gradient(rgba(0,0,0,.22),transparent 70%)}
+.media .pw{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:center;gap:4%;padding-bottom:13%;width:100%;height:100%}
+.media .pw img{width:auto;height:auto;max-height:56%;max-width:30%;object-fit:contain;filter:drop-shadow(0 22px 22px rgba(0,0,0,.3));transform:none}
+.chapter .title{font-size:clamp(38px,5.2vw,82px);margin:20px 0 22px}
+.chapter ul{list-style:none;margin-top:30px}
+.chapter li{display:flex;gap:16px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line);font:500 15px var(--body);color:#3a383f;transition:padding .35s,color .35s}
+.chapter li::before{content:"";width:12px;height:3px;background:var(--red);transform:skewX(-30deg);flex:none}
+.chapter li:hover{color:var(--ink);padding-inline-start:10px}
+@media(max-width:900px){.chapter{grid-template-columns:1fr}.chapter:nth-child(even) .media{order:0}.media.prod{aspect-ratio:4/3}}
+
+/* PRODUCTS */
+#products{background:linear-gradient(180deg,var(--bg),#F6F6F6 30%,#F6F6F6 70%,var(--bg))}
+.agent{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin:28px 0 46px}
+.agent img{height:110px}
+.agent b{font-size:clamp(22px,2.4vw,34px)}
+.agent b em{color:var(--red2);font-style:inherit}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+.tabs button{background:none;border:1px solid var(--line);color:var(--mute);padding:11px 18px;font:600 12px var(--body);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);transition:.3s}
+html[dir="rtl"] .tabs button{letter-spacing:0;font-size:14px}
+.tabs button.on{background:var(--red);border-color:var(--red);color:#fff}
+.tabs button:hover{color:var(--ink)}.tabs button.on:hover{color:#fff}
+.rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.rail-nav{display:none!important}
+.tabs button i{font-style:normal;opacity:.6;margin-inline-start:6px}
+@media(max-width:560px){.rail{grid-template-columns:1fr 1fr;gap:10px}.pc .stg{height:200px}.pc .stg img{max-height:160px}.pc .bd{padding:14px}.pc h3{font-size:18px}.pc li{font-size:12px}}
+.pc{scroll-snap-align:start;background:#fff;border:1px solid var(--line);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pc .stg{height:290px;position:relative;display:grid;place-items:end center;padding-bottom:30px;background:radial-gradient(ellipse 60% 70% at 50% 40%,#ffffff,#f1f1f1 85%)}
+.pc .stg::before{content:"";position:absolute;left:15%;right:15%;bottom:22px;height:18px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.28),transparent 70%)}
+.pc .stg img{max-height:230px;width:auto;position:relative;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.pc:hover .stg img{transform:translateY(-12px) scale(1.04)}
+.pc .stg::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-18deg);transition:left .9s}
+.pc:hover .stg::after{left:130%}
+.pc .bd{padding:22px 24px 26px;border-top:3px solid var(--red);flex:1}
+.pc .cat{font:600 10px var(--body);letter-spacing:.3em;color:var(--red2);text-transform:uppercase}
+html[dir="rtl"] .pc .cat{letter-spacing:0;font-size:12px}
+.pc h3{font-size:26px;margin:10px 0 14px}
+.pc ul{list-style:none}
+.pc li{font-size:13.5px;color:#4a4850;line-height:1.55;padding:5px 0;padding-inline-start:16px;position:relative}
+.pc li::before{content:"";position:absolute;inset-inline-start:0;top:12px;width:8px;height:2px;background:var(--red)}
+.pc .g{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.pc .g span{font:600 11px var(--body);padding:5px 9px;background:rgba(46,49,146,.07);border:1px solid rgba(46,49,146,.35);color:var(--blue)}
+.rail-nav{display:flex;gap:8px;margin-top:10px}
+.rail-nav button{width:46px;height:46px;background:none;border:1px solid var(--line);color:var(--ink);font-size:18px;cursor:pointer}
+.rail-nav button:hover{border-color:var(--red);background:var(--red);color:#fff}
+
+/* SIGNATURE PRODUCT */
+#signature{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px;overflow:hidden}
+#signature .big{position:relative;display:grid;place-items:center;height:80vh}
+#signature .big .halo{position:absolute;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(213,6,50,.45),transparent 65%);filter:blur(10px)}
+#signature .big img{height:min(70vh,560px);width:auto;position:relative;filter:drop-shadow(0 40px 50px rgba(0,0,0,.3))}
+#signature .ring{position:absolute;width:82%;aspect-ratio:1;border:1px dashed rgba(0,0,0,.14);border-radius:50%;animation:rot 40s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.facts{margin-top:34px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--bg);padding:18px 22px;display:flex;gap:18px;align-items:baseline;font-size:15px;color:#3a383f}
+.facts b{font:italic 900 22px var(--disp);color:var(--red2);min-width:34px}
+@media(max-width:900px){#signature{grid-template-columns:1fr;gap:10px}#signature .big{height:min(62vh,520px);overflow:hidden}#signature .big img{height:min(52vh,440px)}}
+
+/* CENTERS GALLERY */
+#centers{padding:0;height:400vh}
+#centers .pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+#centers .hd{padding:0 clamp(16px,6vw,96px);margin-bottom:5vh}
+.strip{display:flex;gap:2vw;padding:0 clamp(16px,6vw,96px);will-change:transform}
+.strip figure{flex:none;width:min(62vw,860px);height:58vh;position:relative;overflow:hidden}
+.strip figure img{width:100%;height:100%;object-fit:cover;filter:contrast(1.12) brightness(.8);transform:scale(1.15)}
+.strip figcaption{position:absolute;bottom:18px;inset-inline-start:20px;font:600 10px var(--body);letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+html[dir="rtl"] .strip figcaption{letter-spacing:0;font-size:13px}
+.strip figure::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 45%)}
+@media(max-width:760px){.strip figure{width:82vw;height:50vh}}
+
+/* BRANCHES */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 36px}
+.filters button{background:none;border:1px solid var(--line);color:var(--mute);padding:10px 16px;font:600 13px var(--body);cursor:pointer;transition:.3s}
+.filters button.on,.filters button:hover{border-color:var(--red);color:var(--ink)}
+.blist{border-top:1px solid var(--line)}
+.branch{display:grid;grid-template-columns:60px 1.1fr 2fr auto;gap:20px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line);position:relative}
+.branch::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(213,6,50,.14),transparent 60%);opacity:0;transition:opacity .4s;pointer-events:none}
+html[dir="rtl"] .branch::after{background:linear-gradient(-90deg,rgba(213,6,50,.14),transparent 60%)}
+.branch:hover::after{opacity:1}
+.branch .n{font:600 11px var(--body);color:var(--mute);letter-spacing:.2em}
+.branch .c{font-size:clamp(24px,2.6vw,38px)}
+.branch .d{color:#4a4850;font-size:15px}
+.branch a{font:700 11px var(--body);letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--line);padding:12px 18px;white-space:nowrap;transition:.3s}
+html[dir="rtl"] .branch a{letter-spacing:0;font-size:13px}
+.branch a:hover{background:var(--red);border-color:var(--red);color:#fff}
+@media(max-width:760px){.branch{grid-template-columns:1fr;gap:8px}.branch .n{display:none}.branch a{justify-self:start;margin-top:8px}}
+
+/* B2B */
+#b2b{background:linear-gradient(180deg,var(--bg),rgba(46,49,146,.07) 50%,var(--bg))}
+.b2b-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(30px,6vw,100px);align-items:start}
+.perks{margin-top:36px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+.perk{background:var(--bg);padding:22px 24px;display:flex;gap:18px}
+.perk b{font:italic 900 22px var(--disp);color:var(--red2)}
+.perk h4{font:600 16px var(--body);margin-bottom:5px}
+.perk p{font-size:14px;color:var(--mute);line-height:1.6}
+form{background:#fff;border:1px solid var(--line);border-top:4px solid var(--red);padding:clamp(24px,3vw,44px)}
+form h3{font-size:30px;margin-bottom:8px}
+form .sub{color:var(--mute);font-size:14px;margin-bottom:28px;line-height:1.6}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.f{display:flex;flex-direction:column;gap:8px}.f.full{grid-column:1/-1}
+.f label{font:600 10px var(--body);letter-spacing:.26em;text-transform:uppercase;color:var(--mute)}
+html[dir="rtl"] .f label{letter-spacing:0;font-size:13px}
+.f input,.f select,.f textarea{background:transparent;border:0;border-bottom:1px solid rgba(0,0,0,.2);color:var(--ink);font:400 15px var(--body);padding:10px 0;outline:none;border-radius:0}
+.f select option{background:#fff}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--red)}
+.f textarea{resize:vertical;min-height:80px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{letter-spacing:0;text-transform:none;font-size:13px;color:#3a383f;border:1px solid var(--line);padding:8px 12px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.checks input{accent-color:var(--red)}
+form .cta{margin-top:28px;width:100%;justify-content:center;padding:18px}
+.fmsg{margin-top:14px;font-size:13px;color:var(--mute);min-height:18px}
+@media(max-width:900px){.b2b-grid{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
+
+/* FINALE */
+#finale{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:hidden;padding-bottom:0}
+#finale .bars{position:absolute;inset:0;display:flex;gap:4vw;justify-content:center;opacity:.16;pointer-events:none}
+#finale .bars i{width:9vw;height:150%;margin-top:-20%;transform:skewX(-18deg) translateY(100%)}
+#finale .bars i:nth-child(1){background:var(--red)}#finale .bars i:nth-child(2){background:var(--white)}#finale .bars i:nth-child(3){background:var(--blue)}
+#finale h2{font-size:clamp(44px,9.5vw,170px);white-space:nowrap;direction:ltr;unicode-bidi:isolate;position:relative;color:var(--ink);line-height:.9}#finale h2 .r{color:var(--red)}
+#finale p{position:relative;margin-top:18px}
+#finale .cta{position:relative;margin-top:40px}
+.social{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.social a{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);color:var(--ink);transition:background .3s,border-color .3s,color .3s,transform .3s}
+.social a svg{width:19px;height:19px;fill:currentColor}
+.social a:hover{background:var(--red);border-color:var(--red);color:#fff;transform:translateY(-3px)}
+#finale .social{position:relative;margin-top:34px}
+
+footer{border-top:1px solid var(--line);padding:36px clamp(16px,6vw,96px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;color:var(--mute);font-size:13px}
+footer img{height:26px}
+.scr{display:inline-block}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="loader"><i class="st s1"></i><i class="st s2"></i><i class="st s3"></i><img src="autolube.png" alt="Auto Lube"></div>
+
+<nav id="nav">
+  <a class="brand" href="#hero"><img class="al" src="autolube.png" alt="Auto Lube"><span class="sep"></span><img class="lc" src="lucas.png" alt="Lucas Oil"></a>
+  <ul>
+    <li><a href="#services" data-i18n="nav1">Services</a></li>
+    <li><a href="#products" data-i18n="nav2">Products</a></li>
+    <li><a href="#branches" data-i18n="nav3">Centers</a></li>
+    <li><a href="#b2b" data-i18n="nav4">For Business</a></li>
+  </ul>
+  <div class="navr"><button class="lang" id="lang">العربية</button><a class="cta" href="#branches" data-i18n="visit">Find a Center</a></div>
+</nav>
+
+<main>
+<section id="hero">
+  <div class="beam" id="beam"></div>
+  <div class="word disp" id="word"><span class="o">Keep That<br>Engine Alive!</span><span class="f" id="wordf">Keep That<br>Engine Alive!</span></div>
+  <div class="stage" id="stage"></div>
+  <div class="floor"></div>
+  <div class="hero-bot">
+    <div><div class="k" data-i18n="kicker">Lucas Oil · Authorized Service Operator · Saudi Arabia</div><p class="lead" style="margin-top:12px" data-i18n="herolead">American full-synthetic oils and additives, put to work by specialists at eight Auto Lube centers across the Kingdom.</p></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="cta" href="#products" data-i18n="seeP">See the Products</a><a class="cta ghost" href="#branches" data-i18n="visit">Find a Center</a></div>
+  </div>
+  <div class="hero-stripe"><i></i><i></i><i></i></div>
+</section>
+
+<section id="manifesto"><p id="mtext" data-i18n-html="manifesto"></p></section>
+
+<section class="cinema" id="cin1">
+  <div class="pin"><div class="ph" style="background-image:url(img/corvette.jpg);background-position:center 30%"></div><div class="shade"></div>
+    <div class="txt"><div class="eyebrow" data-i18n="cinEye">Written on every wall</div><h2 class="disp"><span class="scr" data-i18n="cin1">Keep That</span><br><span class="r scr" data-i18n="cin2">Engine Alive.</span></h2><p class="lead" data-i18n="cinLead">It's the line on the walls of every center. It's also the job — every car, every visit.</p></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <div class="eyebrow" data-i18n="abEye">About Us</div>
+      <div class="about-year">1989</div>
+      <div class="about-cap" data-i18n="abCap">Lucas Oil · Founded in the USA</div>
+    </div>
+    <div class="about-body">
+      <h2 class="h2 disp scr" data-i18n="abTitle" style="margin-top:0;margin-bottom:28px;font-size:clamp(40px,5.5vw,88px)">The Real Problem Solvers</h2>
+      <p data-i18n-html="ab1"></p>
+      <p data-i18n-html="ab2"></p>
+      <div class="chain" id="chain"></div>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+</section>
+
+<section id="services">
+  <div class="svc-head"><div><div class="eyebrow" data-i18n="sEye">Services</div><h2 class="h2 disp scr" data-i18n="sTitle">What We Do</h2></div><p class="lead" data-i18n="sLead">From a quick oil change to computer diagnostics, A/C and programming — done in-house, with Lucas products.</p></div>
+  <div id="chapters"></div>
+</section>
+
+<section id="products">
+  <div class="eyebrow" data-i18n="pEye">The Range</div>
+  <h2 class="h2 disp scr" data-i18n="pTitle">Lucas, Only Here.</h2>
+  <div class="agent"><img src="lucas.png" alt="Lucas Oil Products Inc."><b class="disp" data-i18n-html="pAgent">The <em>authorized operator</em> of<br>Lucas Oil service centers in Saudi Arabia</b></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="rail" id="rail"></div>
+  <div class="rail-nav"><button id="rl" aria-label="Previous">←</button><button id="rr" aria-label="Next">→</button></div>
+</section>
+
+<section id="signature">
+  <div class="big"><div class="ring"></div><div class="halo"></div><img src="p/stabilizer.png" alt="Lucas Heavy Duty Oil Stabilizer" id="sigimg"></div>
+  <div>
+    <div class="eyebrow" data-i18n="sgEye">The Signature</div>
+    <h2 class="h2 disp scr" data-i18n="sgTitle">Oil Stabilizer</h2>
+    <p class="lead" data-i18n="sgLead">The bottle Lucas is known for. Added at every oil change, it works alongside your oil to protect the engine.</p>
+    <div class="facts" id="facts"></div>
+  </div>
+</section>
+
+<section id="centers">
+  <div class="pin">
+    <div class="hd"><div class="eyebrow" data-i18n="gEye">Inside Our Centers</div><h2 class="h2 disp scr" data-i18n="gTitle">Built for the Job</h2></div>
+    <div class="strip" id="strip"></div>
+  </div>
+</section>
+
+<section id="branches">
+  <div class="eyebrow" data-i18n="bEye">Eight Centers · Six Cities</div>
+  <h2 class="h2 disp scr" data-i18n="bTitle">Find Your Center</h2>
+  <div class="filters" id="filters"></div>
+  <div class="blist" id="blist"></div>
+</section>
+
+<section id="b2b">
+  <div class="b2b-grid">
+    <div>
+      <div class="eyebrow" data-i18n="cEye">For Business &amp; Fleets</div>
+      <h2 class="h2 disp scr" data-i18n="cTitle">Fleets Run on Lucas</h2>
+      <p class="lead" style="margin-top:20px" data-i18n="cLead">One partner for every vehicle you operate — eight centers in six cities, genuine Lucas products and a dedicated account manager.</p>
+      <div class="perks" id="perks"></div>
+    </div>
+    <form id="form" novalidate>
+      <h3 class="disp" data-i18n="fTitle">Request a Corporate Contract</h3>
+      <p class="sub" data-i18n="fSub">Tell us about your fleet. Our business development team will get back to you.</p>
+      <div class="fg">
+        <div class="f"><label data-i18n="f1">Company name</label><input name="company"></div>
+        <div class="f"><label data-i18n="f2">Contact person</label><input name="contact"></div>
+        <div class="f"><label data-i18n="f3">Phone</label><input name="phone" type="tel"></div>
+        <div class="f"><label data-i18n="f4">Work email</label><input name="email" type="email"></div>
+        <div class="f"><label data-i18n="f5">Fleet size</label><select name="fleet"><option>1 – 10</option><option>11 – 50</option><option>51 – 200</option><option>200+</option></select></div>
+        <div class="f"><label data-i18n="f6">Sector</label><select name="sector" id="sector"></select></div>
+        <div class="f full"><label data-i18n="f7">Cities of operation</label><div class="checks" id="cities"></div></div>
+        <div class="f full"><label data-i18n="f8">Notes</label><textarea name="notes"></textarea></div>
+      </div>
+      <button class="cta" type="submit" data-i18n="fSend">Send Request</button>
+      <div class="fmsg" id="fmsg"></div>
+    </form>
+  </div>
+</section>
+
+<section id="finale">
+  <div class="bars"><i></i><i></i><i></i></div>
+  <h2 class="disp"><span class="scr" data-final="Keep That">Keep That</span><br><span class="r scr" data-final="Engine Alive!">Engine Alive!</span></h2>
+  <p class="lead" data-i18n="finLead">Drive in. Feel the difference. Drive out.</p>
+  <a class="cta" href="#branches" data-i18n="visit">Find a Center</a>
+  <div class="social"><a href="https://www.instagram.com/auto_lube.sa" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.8a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-9.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/></svg></a><a href="https://www.tiktok.com/@auto_lube" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3a4.3 4.3 0 0 1-3.2-1.5z"/></svg></a><a href="https://www.youtube.com/@lucasoil_sa" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"/></svg></a><a href="https://www.linkedin.com/company/auto-lube1/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3v-11zm6.5 0h3.8v1.5h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6v5.5h-4v-4.9c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6v5h-4v-11z"/></svg></a><a href="https://wa.me/966555777829" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.4z"/></svg></a></div>
+</section>
+</main>
+
+<footer>
+  <div class="brand"><img src="autolube.png" alt="Auto Lube"><span class="sep"></span><img src="lucas.png" alt="Lucas Oil" style="height:30px"></div>
+  <span data-i18n="foot">© 2026 Auto Lube Co. · Lucas Oil service centers in Saudi Arabia</span>
+  <div class="social"><a href="https://www.instagram.com/auto_lube.sa" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 4.8a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-9.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/></svg></a><a href="https://www.tiktok.com/@auto_lube" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 4.9 5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3a4.3 4.3 0 0 1-3.2-1.5z"/></svg></a><a href="https://www.youtube.com/@lucasoil_sa" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"/></svg></a><a href="https://www.linkedin.com/company/auto-lube1/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3v-11zm6.5 0h3.8v1.5h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6v5.5h-4v-4.9c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6v5h-4v-11z"/></svg></a><a href="https://wa.me/966555777829" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.4z"/></svg></a></div>
+  <a href="mailto:M.Nasser@lucasoil.sa">M.Nasser@lucasoil.sa</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* ===== HERO LINEUP (depth = parallax strength, h = height) ===== */
+const LINEUP=[
+ {s:'coolant',h:.66,d:.4},{s:'txfix',h:.86,d:.6},{s:'stabilizer',h:.86,d:.8},{s:'synth5w30',h:.8,d:1.2},{s:'atf_mv',h:.8,d:.8},{s:'puresynth',h:.86,d:.6},{s:'octane',h:.62,d:.4}
+];
+
+/* ===== SERVICES (real photos) ===== */
+const CH=[
+ {img:'svc_oil',en:{t:'Engine Oil',d:'Fully synthetic Lucas oil in the right grade for your engine, plus treatments that stop leaks and protect.',i:['Engine oil change','Engine treatments & oil stop-leak','Oil filter']},ar:{t:'زيت المحرك',d:'زيوت لوكاس التخليقية بالكامل بالدرجة المناسبة لمحركك، مع معالجات تمنع التهريب وتحمي المحرك.',i:['تغيير زيت المحرك','معالجات المحرك ومانع تهريب الزيت','فلتر الزيت']}},
+ {img:'autel',en:{t:'Inspection & Diagnostics',d:'Every fluid checked and the car read by computer, so you know exactly what it needs.',i:['Engine, gearbox & brake fluid check','Power steering, differential & transfer case check','Computer diagnostics']},ar:{t:'الفحص والتشخيص',d:'فحص كامل للزيوت وفحص كمبيوتر للسيارة، عشان تعرف بالضبط وش تحتاج.',i:['فحص زيت المكينة والجيربوكس والفرامل','فحص الدركسون والدفرنس والدبل','فحص كمبيوتر']}},
+ {img:'svc_fluid',en:{t:'Fluid Service',d:'Gearbox, steering, brakes, differentials and transfer case — drained, refilled and greased.',i:['Gearbox oil','Power steering fluid','Brake fluid','Differential & transfer case oil','Chassis greasing']},ar:{t:'صيانة الزيوت',d:'الجيربوكس والدركسون والفرامل والدفرنس والدبل — تفريغ وتعبئة وتشحيم.',i:['زيت الجيربوكس','زيت الدركسون','زيت الفرامل','زيت الدفرنس والدبل','تشحيم السيارة']}},
+ {img:'lathe',img2:'svc_brake2',en:{t:'Brakes',d:'Pads replaced and rotors resurfaced on-car for a smooth, quiet, certain stop.',i:['Brake pad replacement','Rotor resurfacing']},ar:{t:'الفرامل',d:'تغيير الأقمشة وخرط الهوبات على السيارة لوقفة ناعمة وهادئة.',i:['تغيير الأقمشة','خرط الهوبات']}},
+ {img:'svc_flush',en:{t:'Engine Flush',d:'Ignition, fuel and air restored to how the engine was meant to run.',i:['Spark plugs','Fuel filter','Injector cleaning','Engine belt','Throttle body cleaning','Radiator flush']},ar:{t:'تصفية المحرك',d:'نرجّع الإشعال والوقود والهواء مثل ما صُمم المحرك يشتغل.',i:['تغيير البواجي','فلتر البنزين','تنظيف البخاخات','تغيير سير المكينة','تنظيف بوابة الهواء','تنظيف ثلاجة المحرك']}},
+ {img:'svc_ac',en:{t:'A/C Service',d:'Complete A/C cycle service to keep the cabin cool through the Saudi summer.',i:['A/C cycle service']},ar:{t:'صيانة التكييف',d:'صيانة دورة التكييف كاملة عشان تبقى المقصورة باردة في صيف السعودية.',i:['صيانة دورة التكييف']}},
+ {img:'svc_prog',en:{t:'Vehicle Programming',d:'Modules coded and updated with professional diagnostic tools.',i:['Vehicle programming']},ar:{t:'برمجة السيارة',d:'برمجة وتحديث أنظمة السيارة بأجهزة تشخيص احترافية.',i:['برمجة السيارة']}},
+ {img:'svc_quick',en:{t:'Quick Service',d:'Fast, essential maintenance while you wait — without cutting a single corner.',i:['Quick service while you wait']},ar:{t:'الصيانة السريعة',d:'صيانة أساسية سريعة وأنت تنتظر — بدون أي تنازل عن الجودة.',i:['صيانة سريعة أثناء الانتظار']}},
+];
+
+/* ===== PRODUCTS — specs taken from the Lucas Oil catalog ===== */
+const CATS={all:['All','الكل'],engine:['Motor Oils & Engine','زيوت وإضافات المحرك'],fuel:['Fuel System','نظام الوقود'],drive:['Transmission & Gear','الجيربكس والقير'],brake:['Brakes, Steering & Cooling','الفرامل والدركسون والتبريد'],moto:['Motorcycle & Powersports','الدراجات والمحركات الصغيرة'],grease:['Greases & Lubes','الشحوم'],care:['Car Care','العناية بالسيارة']};
+const PR=[
+ {"s": "synth5w30", "c": "engine", "en": {"n": "Full Synthetic Motor Oil", "p": ["Fully synthetic engine oil, API SP", "Holds its viscosity at high temperatures", "Longer engine and oil life"], "g": ["0W-20", "0W-40", "5W-20", "5W-30", "5W-40", "5W-50", "10W-30", "10W-40", "10W-60", "20W-50"]}, "ar": {"n": "زيت محرك تخليقي بالكامل", "p": ["زيت محرك تخليقي بالكامل بمواصفة API SP", "ثبات اللزوجة في درجات الحرارة العالية", "عمر أطول للمحرك والزيت"], "g": ["0W-20", "0W-40", "5W-20", "5W-30", "5W-40", "5W-50", "10W-30", "10W-40", "10W-60", "20W-50"]}},
+ {s:'stabilizer',c:'engine',en:{n:'Heavy Duty Oil Stabilizer',p:['Protects against friction, wear and dry starts; extends oil life','Treats smoke, engine noise and oil burning','Gasoline or diesel; quiets differentials and manual gearboxes'],g:['Add ~20% at oil change']},ar:{n:'محسن الزيت البترولي',p:['يحمي المحرك من الاحتكاك والتآكل وبداية التشغيل الجاف ويزيد عمر الزيت','يعالج الأدخنة وصوت التكايات ونقص الزيت','لمحركات البنزين والديزل ويقلل ضجيج الدفرنس والقير العادي'],g:['٢٠٪ عند تغيير الزيت']}},
+ {s:'puresynth',c:'engine',en:{n:'Pure Synthetic Oil Stabilizer',p:['For engines on light synthetic oils','Treats noise and lifter tick in modern engines','Gasoline and diesel engines'],g:['5W-20','0W-20','5W-30','0W-40']},ar:{n:'محسن الزيت التخليقي',p:['يحمي المحركات التي تستخدم زيوت خفيفة','يعالج الضجيج وصوت التكايات في المحركات الحديثة','لجميع محركات البنزين والديزل'],g:['5W-20','0W-20','5W-30','0W-40']}},
+ {"s": "stopleak", "c": "engine", "en": {"n": "Engine Oil Stop Leak", "p": ["Designed to stop leaks and recondition seals", "Reduces engine noise and oil loss", "Compatible with all engine oils; gasoline or diesel"], "g": ["Add 20–40% at oil change"]}, "ar": {"n": "مانع تهريب زيت المحرك", "p": ["مصمم لوقف التهريب وتجديد الصوف", "يقلل من ضجيج المحرك ونقص الزيت", "متوافق مع جميع زيوت المحركات، بنزين أو ديزل"], "g": ["٢٠–٤٠٪ عند تغيير الزيت"]}},
+ {"s": "complete", "c": "engine", "en": {"n": "Complete Engine Treatment", "p": ["In fuel: cleans and lubricates the fuel system from tank to injectors", "In oil: cleans the engine and removes deposits", "Protects against friction and wear"], "g": ["Gasoline or diesel"]}, "ar": {"n": "معالج المحرك الكامل", "p": ["في الوقود: ينظف ويزيت نظام الوقود من الخزان إلى البخاخات", "في الزيت: ينظف المحرك ويزيل الترسبات", "يحمي من الاحتكاك والتآكل"], "g": ["بنزين أو ديزل"]}},
+ {s:'ck4',c:'engine',en:{n:'CK-4 Diesel Engine Oil',p:['Longer engine and oil life; lower fuel and oil consumption','High deposit resistance and temperature stability','Safe for catalytic converters and O₂ sensors'],g:['15W-40','10W-30']},ar:{n:'زيت محركات الديزل CK-4',p:['عمر أطول للمحرك والزيت واستهلاك أقل للوقود والزيت','مقاومة عالية للشوائب واستقرار في الحرارة','آمن على دبة الرصاص وحساس الأكسجين'],g:['15W-40','10W-30']}},
+ {s:'fuelkit',c:'fuel',en:{n:'Complete Fuel System Renewal Kit',p:['Deep injector cleaner: cuts NOx, removes carbon, stops knock','Cleaner & lubricant: lubricates the whole fuel system','Extends the life of pump, valves and injectors'],g:['4 fill-ups']},ar:{n:'مجموعة تنظيف نظام الوقود',p:['منظف البخاخات العميق: يقلل الانبعاثات ويزيل الكربون ويوقف الطرق','منظف ومزيت: يزيت وينظف نظام الوقود بالكامل','يطيل عمر طرمبة الوقود والبلوف والبخاخات'],g:['٤ تعبئات']}},
+ {s:'octane',c:'fuel',en:{n:'Octane Booster',p:['Raises octane by up to 3 points','Treats up to 94 L of fuel','Safe for turbos, O₂ sensors and spark plugs'],g:['3X Boost']},ar:{n:'معزز الأوكتان',p:['يرفع الأوكتان حتى ٣ درجات','يعالج حتى ٩٤ لتر وقود','آمن على التيربو وحساسات الأكسجين والبواجي'],g:['3X Boost']}},
+ {s:'diesel',c:'fuel',en:{n:'Diesel Deep Clean',p:['Cleans diesel pump and injectors, stops smoke','Easier starting','Reduces harmful deposits and emissions'],g:['Diesel']},ar:{n:'منظف بخاخات الديزل العميق',p:['ينظف طرمبة الديزل والبخاخات ويوقف الدخان','يسهّل تشغيل المحرك','يقلل الرواسب والانبعاثات الضارة'],g:['ديزل']}},
+ {"s": "upper", "c": "fuel", "en": {"n": "Upper Cylinder Lubricant & Injector Cleaner", "p": ["Cleans and lubricates the entire fuel system", "Extends the life of fuel pump, valves and injectors", "Helps with low-sulfur diesel issues; reduces fuel use and emissions"], "g": ["Gasoline & diesel"]}, "ar": {"n": "منظف ومزيت البخاخات", "p": ["ينظف ويزيت نظام الوقود بالكامل", "يطيل عمر طرمبة الوقود والبلوف والبخاخات", "يعالج مشاكل الديزل منخفض الكبريت ويقلل الاستهلاك والانبعاثات"], "g": ["بنزين وديزل"]}},
+ {"s": "fsc", "c": "fuel", "en": {"n": "Deep Clean Fuel System Cleaner", "p": ["Cleans injectors and removes carbon deposits", "Reduces harmful emissions and the need for higher-octane fuel", "Stops knock and restores power"], "g": ["Treats up to 115 L"]}, "ar": {"n": "منظف البخاخات العميق", "p": ["ينظف البخاخات ويزيل الترسبات الكربونية", "يقلل الانبعاثات الضارة والحاجة لوقود أعلى أوكتان", "يوقف الطرق ويعيد القوة للمحرك"], "g": ["يعالج حتى ١١٥ لتر"]}},
+ {"s": "gdi", "c": "fuel", "en": {"n": "Deep Clean GDI", "p": ["For direct-injection and port-injection engines", "Cleans throttle body, valves and injectors", "Restores engine power and performance"], "g": ["Every 15,000 km"]}, "ar": {"n": "منظف بخاخات GDI العميق", "p": ["للمحركات ذات الحقن المباشر", "ينظف البوابة والبلوف والبخاخات", "يساعد على استعادة عزم وأداء المحرك"], "g": ["كل ١٥٬٠٠٠ كم"]}},
+ {"s": "txfix", "c": "drive", "en": {"n": "Transmission Fix", "p": ["Stops slipping and delayed engagement", "Cleans and lubricates sticking valves for smoother shifts", "Stops most transmission seal leaks"], "g": ["Stops slip"]}, "ar": {"n": "معالج الجيربكس", "p": ["يعالج النتعة والتفويت والتأخير في التعشيق", "ينظف ويزيت البلوف لتغييرات أنعم", "يوقف معظم تسريبات الجيربكس"], "g": ["Stops slip"]}},
+ {"s": "atf_cond", "c": "drive", "en": {"n": "Transmission Fluid Conditioner", "p": ["Additives that help prevent slipping and leaks before they start", "Conditions seals; reduces noise and vibration", "Compatible with most ATF; does not affect new-car warranty"], "g": ["ATF"]}, "ar": {"n": "ملطف زيت الجيربكس", "p": ["إضافات تمنع تفويت النمر وتهريب الزيت قبل حدوثها", "يرطب الصوف والجلود ويقلل الضوضاء والاهتزاز", "متوافق مع معظم زيوت ATF ولا يؤثر على ضمان السيارة"], "g": ["ATF"]}},
+ {"s": "atf_mv", "c": "drive", "en": {"n": "Full Synthetic Multi-Vehicle ATF", "p": ["Low-viscosity fluid for modern automatic transmissions", "Meets or exceeds DEXRON VI, MERCON SP, LV and Toyota WS", "Smoother shifts and longer fluid life"], "g": ["Low viscosity"]}, "ar": {"n": "زيت جيربكس تخليقي متعدد الاستخدام", "p": ["زيت منخفض اللزوجة للجيربكسات الحديثة", "يطابق أو يتجاوز DEXRON VI و MERCON SP و LV و Toyota WS", "تغييرات أنعم وعمر أطول للزيت"], "g": ["لزوجة منخفضة"]}},
+ {"s": "atf_semi", "c": "drive", "en": {"n": "Semi-Synthetic Multi-Vehicle ATF", "p": ["Suits a wide range of vehicles, including Japanese makes", "Smoother shifts; prevents foaming and rust", "Compatible with synthetic fluids"], "g": ["Standard viscosity"]}, "ar": {"n": "زيت جيربكس نصف تخليقي متعدد الاستخدام", "p": ["مناسب لمختلف أنواع السيارات بما فيها اليابانية", "تغييرات أنعم ويمنع تكون الرغوة والصدأ", "متوافق مع الزيوت التخليقية"], "g": ["لزوجة قياسية"]}},
+ {"s": "cvt", "c": "drive", "en": {"n": "Synthetic Multi-Vehicle CVT Fluid", "p": ["For continuously variable transmissions", "Protects against wear and rust in severe driving", "No-foam formula"], "g": ["CVT"]}, "ar": {"n": "زيت جيربكس CVT تخليقي", "p": ["للجيربكسات من نوع CVT", "حماية من التآكل والصدأ في ظروف القيادة الشاقة", "تركيبة تمنع تكون الرغوة"], "g": ["CVT"]}},
+ {s:'gear8090',c:'drive',en:{n:'Heavy Duty Gear Oil',p:['For manual gearboxes and differentials','Protects against rust and foaming','Exceeds API GL-5, Mack GO-J, SAE J2360, MT-1'],g:['80W-90','85W-140']},ar:{n:'زيت القير والدفرنس البترولي',p:['للقير العادي والدفرنس','حماية من الصدأ وتكوّن الرغوة','يتخطى API GL-5 و Mack GO-J و SAE J2360 و MT-1'],g:['80W-90','85W-140']}},
+ {s:'gear75',c:'drive',en:{n:'Synthetic Gear Oil',p:['Longer gear life, better performance, less noise','Handles high temperatures without losing its properties','Strong protection for 4×4 and high-performance drivetrains'],g:['75W-90','75W-140']},ar:{n:'زيت القير والدفرنس التخليقي',p:['عمر أطول للقير وأداء أفضل وأصوات أقل','يتحمل الحرارة المرتفعة دون أن يفقد خواصه','حماية عالية لسيارات الدفع الرباعي والأداء العالي'],g:['75W-90','75W-140']}},
+ {s:'brake',c:'brake',en:{n:'Synthetic Brake Fluid',p:['Meets the highest safety standards','Protects seals; guards against rust and corrosion','Works across brake system types'],g:['DOT 3','DOT 4']},ar:{n:'زيت الفرامل التخليقي',p:['مطابق لأعلى معايير الأمان','يحمي الصوف ويوفر حماية من الصدأ والتآكل','يناسب أنظمة الفرامل المختلفة'],g:['DOT 3','DOT 4']}},
+ {s:'pssl',c:'brake',en:{n:'Power Steering Stop Leak',p:['Stops power steering seal leaks','Reconditions seals; quiets and sharpens steering','No harmful solvents'],g:['Stop Leak']},ar:{n:'زيت إيقاف تهريب الدركسون',p:['يوقف تسريبات صوف الدركسون','يجدد الصوف ويقلل الأصوات ويحسن الاستجابة','لا يحتوي على مذيبات ضارة'],g:['مانع تهريب']}},
+ {"s": "psfluid", "c": "brake", "en": {"n": "Power Steering Fluid", "p": ["Conditioners that help stop minor leaks", "Better steering performance", "Protects against rust and foaming; longer fluid life"], "g": ["Power steering"]}, "ar": {"n": "زيت الدركسون", "p": ["إضافات وعوامل ترطيب تساعد على إيقاف التسريبات الخفيفة", "أداء أفضل للدركسون", "حماية من الصدأ والرغوة وعمر أطول للزيت"], "g": ["دركسون"]}},
+ {"s": "pscond", "c": "brake", "en": {"n": "Power Steering Fluid with Conditioner", "p": ["Smooth, quiet steering; conditions seals against leaks", "Improves steering response", "Compatible with all power steering fluids"], "g": ["All PS systems"]}, "ar": {"n": "زيت وملطف الدركسون", "p": ["أداء سلس وهادئ ويرطب الصوف لمنع التهريب", "يحسن استجابة الدركسون", "متوافق مع جميع زيوت الدركسون"], "g": ["جميع الأنظمة"]}},
+ {s:'coolant',c:'brake',en:{n:'Super Coolant',p:['Lowers temperatures by up to 20°F','Prevents rust, corrosion and electrolysis','Mixes with plain water or any coolant'],g:['Radiator']},ar:{n:'مبرد الرديتر',p:['يخفض الحرارة حتى ٢٠ درجة فهرنهايت','يمنع الصدأ والتآكل والتحلل الكهربائي','يُخلط مع الماء العادي أو أي سائل تبريد'],g:['الرديتر']}},
+ {s:'moto',c:'moto',en:{n:'Synthetic Motorcycle Oil',p:['Lower oil temperatures, longer oil and engine life','Less noise, fewer leaks, better performance','API SG/SF/CC/CD, JASO MA, ACEA A3'],g:['10W-40','10W-50','20W-50']},ar:{n:'زيت الدراجات النارية',p:['حرارة زيت أقل وعمر أطول للزيت والمحرك','أصوات وتسريبات أقل وأداء أفضل','API SG/SF/CC/CD و JASO MA و ACEA A3'],g:['10W-40','10W-50','20W-50']}},
+ {"s": "moto50", "c": "moto", "en": {"n": "Synthetic SAE 50WT Motorcycle Oil", "p": ["Made for air-cooled V-Twin engines such as Harley-Davidson", "Lower operating temperature", "Longer oil life"], "g": ["SAE 50"]}, "ar": {"n": "زيت دراجات سنتاتيك SAE 50", "p": ["مخصص لمحركات V-Twin المبردة بالهواء مثل هارلي-ديفيدسون", "حرارة تشغيل أقل", "عمر أطول للزيت"], "g": ["SAE 50"]}},
+ {"s": "atv", "c": "moto", "en": {"n": "ATV / UTV Engine Oil", "p": ["For four-wheelers and off-road vehicles", "Longer oil life; handles high temperatures", "Exceeds manufacturer specs and meets JASO"], "g": ["SAE 10W-40"]}, "ar": {"n": "زيت محركات ATV / UTV", "p": ["أفضل زيت للدبابات والسيارات الصحراوية", "عمر أطول للزيت ويتحمل الحرارة العالية", "يتجاوز مواصفات المصنع ويلبي JASO"], "g": ["SAE 10W-40"]}},
+ {"s": "vtwin", "c": "moto", "en": {"n": "V-Twin Synthetic Gear Oil", "p": ["Handles high temperatures", "Made from high-quality synthetic base oils", "Quieter gear operation and wear protection for Harley-Davidson and V-Twins"], "g": ["SAE 75W-140"]}, "ar": {"n": "زيت قير V-Twin السنتاتيك", "p": ["يتحمل درجات حرارة عالية", "مصنع من زيوت أساس سنتاتيك عالية الجودة", "يساعد القير على العمل بهدوء ويحميه، مصمم لهارلي-ديفيدسون"], "g": ["SAE 75W-140"]}},
+ {"s": "primary", "c": "moto", "en": {"n": "Primary Chaincase Oil", "p": ["Smooth clutch engagement", "Longer chain and oil life; lower clutch temperature", "For heavy-duty use such as Harley-Davidson"], "g": ["Primary"]}, "ar": {"n": "زيت الكلتش البرايمري", "p": ["يساعد على عمل الكلتش بسهولة", "عمر أطول للجنزير والزيت وحرارة أقل للكلتش", "للخدمة الشاقة مثل هارلي-ديفيدسون"], "g": ["برايمري"]}},
+ {"s": "motostab", "c": "moto", "en": {"n": "Motorcycle Oil Stabilizer", "p": ["Protects against dry starts", "For gearbox and clutch use in motorcycles", "Lowers oil temperature and reduces friction"], "g": ["Motorcycles"]}, "ar": {"n": "محسن زيت الدراجات النارية", "p": ["يحمي من بداية التشغيل الجافة", "للاستخدام في القير والكلتش للدراجات النارية", "يخفض حرارة الزيت ويقلل الاحتكاك"], "g": ["دراجات نارية"]}},
+ {"s": "twocycle", "c": "moto", "en": {"n": "Semi-Synthetic 2-Cycle Oil — Land & Sea", "p": ["NMMA TC-W3; meets or exceeds API TC and JASO FB", "Low smoke, longer spark plug life, lower consumption", "For watercraft, motorcycles, ATVs, go-karts and garden tools"], "g": ["TC-W3"]}, "ar": {"n": "زيت محركات ثنائية الشوط نصف تخليقي", "p": ["معتمد NMMA TC-W3 ويتجاوز API TC و JASO FB", "دخان أقل وعمر أطول للبواجي واستهلاك أقل", "للمراكب المائية والدراجات والدبابات والمعدات"], "g": ["TC-W3"]}},
+ {s:'grease',c:'grease',en:{n:'X-Tra Heavy Duty Grease',p:['For cars, trucks, industrial and agricultural equipment','Holds up to high temperatures; resists rust and oxidation','Meets NLGI GC-LB #2'],g:['NLGI #2']},ar:{n:'شحم الليثيوم الأخضر الحراري',p:['للسيارات والشاحنات والمعدات الصناعية والزراعية','يقاوم الحرارة العالية والصدأ والأكسدة','متوافق مع NLGI GC-LB رقم 2'],g:['NLGI #2']}},
+ {"s": "redtacky", "c": "grease", "en": {"n": "Red \"N\" Tacky Grease", "p": ["Meets NLGI GC-LB #2", "High-quality lithium grease with extreme-pressure protection", "For trucks, industrial equipment, boats and wheel bearings"], "g": ["NLGI #2"]}, "ar": {"n": "شحم الضغط العالي الأحمر", "p": ["متوافق مع NLGI GC-LB رقم 2", "شحم ليثيوم عالي الجودة بحماية من الضغط والتآكل", "للشاحنات والمعدات الصناعية والقوارب والرمان بلي"], "g": ["NLGI #2"]}},
+ {"s": "redspray", "c": "grease", "en": {"n": "Red \"N\" Tacky Spray Grease", "p": ["Spray reaches tight and distant places", "Sticks well to surfaces and resists water washout", "High heat resistance"], "g": ["Spray"]}, "ar": {"n": "شحم الليثيوم الأحمر البخاخ", "p": ["البخاخ يصل للأماكن الضيقة والبعيدة", "يلتصق جيدًا بالأسطح ويقاوم الغسيل بالماء", "مقاوم عالي للحرارة"], "g": ["بخاخ"]}},
+ {"s": "whitelith", "c": "grease", "en": {"n": "White Lithium Grease", "p": ["Meets NLGI GC-LB #2", "For chassis parts and industrial equipment", "For home use too, including door hinges"], "g": ["NLGI #2"]}, "ar": {"n": "شحم الليثيوم الأبيض", "p": ["متوافق مع NLGI GC-LB رقم 2", "لتشحيم أجزاء هيكل السيارة والمعدات الصناعية", "مناسب للاستخدام المنزلي مثل مفصلات الأبواب"], "g": ["NLGI #2"]}},
+ {"s": "chain", "c": "grease", "en": {"n": "Chain Lube", "p": ["Lubricates and extends chain life", "Penetrates rollers and chain links", "Water resistant; protects against rust; safe on O-rings"], "g": ["Spray"]}, "ar": {"n": "مشحم الجنزير", "p": ["يشحم الجنزير ويطيل عمره", "مصمم لاختراق المسامير وبطانات الجنزير", "يقاوم الماء ويحمي من الصدأ ومناسب لـ O-ring"], "g": ["بخاخ"]}},
+ {"s": "parts", "c": "care", "en": {"n": "Multi-Purpose Parts Cleaner & Degreaser", "p": ["Removes deposits, grease and carbon from throttle body, carburetor, valves and brakes", "Effective brake cleaning", "Safe for catalytic converters and O₂ sensors"], "g": ["Aerosol"]}, "ar": {"n": "منظف القطع متعدد الاستخدامات", "p": ["يزيل الرواسب والشحوم والكربون من البوابة والكربريتر والبلوف والفرامل", "ينظف الفرامل بشكل فعال", "آمن على دبة الرصاص وحساس الأكسجين"], "g": ["بخاخ"]}},
+ {"s": "tire", "c": "care", "en": {"n": "Slick Mist Tire & Trim Shine", "p": ["Water-based, oil-free", "Restores tires to like-new shine", "UV and dust protection for tires, trim and bumpers"], "g": ["Fast & easy"]}, "ar": {"n": "ملمع الكفرات", "p": ["ذو أساس مائي خالي من الزيوت", "يستعيد الكفر لمعانه مثل الجديد", "حماية من الأشعة فوق البنفسجية والأتربة"], "g": ["سريع وسهل"]}},
+ {"s": "interior", "c": "care", "en": {"n": "Slick Mist Interior Detailer", "p": ["Oil-free formula with silicone additives", "Cleans and protects doors, dashboards, consoles and seats", "UV protection for plastic, leather, rubber and vinyl"], "g": ["Fast & easy"]}, "ar": {"n": "ملمع داخلي", "p": ["خالي من الزيوت ويحتوي على إضافات السيليكون", "ينظف ويحمي الأبواب والطبلون والمقاعد", "حماية من الأشعة فوق البنفسجية للبلاستيك والجلد والمطاط"], "g": ["سريع وسهل"]}},
+ {"s": "speedwax", "c": "care", "en": {"n": "Slick Mist Speed Wax", "p": ["Oil-free; for cars, trucks, motorcycles and boats", "Use on wet or dry surfaces", "Safe on all paints, clear coats and vinyl wraps; UV protection"], "g": ["Fast & easy"]}, "ar": {"n": "ملمع شمعي خارجي", "p": ["خالي من الزيوت للسيارات والدراجات والقوارب", "يستخدم على الأسطح الرطبة أو الجافة", "آمن على جميع الدهانات والتغليف ويحمي من الأشعة"], "g": ["سريع وسهل"]}},
+ {s:'slick',c:'care',en:{n:'Slick Mist Detailing Kit',p:['Interior detailer, tire shine and exterior speed wax','Microfiber cloth and applicator included','Full protection for every surface'],g:['Kit']},ar:{n:'مجموعة العناية بالسيارة',p:['ملمع داخلي وملمع كفرات وملمع خارجي','تحتوي على أسفنجة وفوطة خاصة','حماية لمختلف أجزاء السيارة'],g:['مجموعة']}}
+];
+const FACTS={en:['Protects against friction, wear and dry starts','Extends oil life and helps lower engine temperature','Treats smoke, lifter noise and oil burning','Works in gasoline and diesel engines'],ar:['يحمي من الاحتكاك والتآكل وبداية التشغيل الجاف','يطيل عمر الزيت ويساعد على خفض حرارة المحرك','يعالج الأدخنة وصوت التكايات ونقص الزيت','لمحركات البنزين والديزل']};
+const GAL=[['al_night',['Auto Lube · Night','أوتو لوب · ليلاً']],['night_facade',['Quick Service','الخدمة السريعة']],['keepangle',['Keep That Engine Alive!','Keep That Engine Alive!']],['al_day',['Auto Lube · Day','أوتو لوب · نهاراً']],['caliper',['Brake Work','صيانة الفرامل']],['facade_day',['Lucas Oil Center','مركز لوكاس أويل']]];
+const BR=[
+ {c:'jed',en:['Jeddah','Al Nuzhah — Airport Mesh'],ar:['جدة','حي النزهة — شبك المطار'],u:'https://maps.app.goo.gl/GmxDPVoDb6GPPszx7'},
+ {c:'jed',en:['Jeddah','Al Muhammadiyah'],ar:['جدة','حي المحمدية'],u:'https://maps.app.goo.gl/viF8AtJRGraWNr4u8'},
+ {c:'ruh',en:['Riyadh','Al Naseem — Khurais Road'],ar:['الرياض','حي النسيم — طريق خريص'],u:'https://maps.app.goo.gl/KfRztCQG9MifATr37'},
+ {c:'ruh',en:['Riyadh','Al Wadi — Abu Bakr Al Siddiq St.'],ar:['الرياض','حي الوادي — شارع أبو بكر الصديق'],u:'https://maps.app.goo.gl/4XT2z2vDKhDfQeWUA'},
+ {c:'khb',en:['Al Khobar','Al Andalus — King Saud St.'],ar:['الخبر','حي الأندلس — شارع الملك سعود'],u:'https://maps.app.goo.gl/6eECZz3ierYhx7Kb9'},
+ {c:'mak',en:['Makkah','Al Umrah Al Jadidah'],ar:['مكة','حي العمرة الجديدة'],u:'https://maps.app.goo.gl/PM1F5tR7Edr78iU38'},
+ {c:'taf',en:['Taif','Al Qayyim Al Aala — Airport Road'],ar:['الطائف','حي القيم الأعلى — طريق المطار'],u:'https://maps.app.goo.gl/Xhhu52gdRXANngVM9'},
+ {c:'abh',en:['Abha','Al Mansak — King Fahd Road'],ar:['أبها','حي المنسك — طريق الملك فهد'],u:'https://maps.app.goo.gl/qJn4TDQnRNMoWbbD6'},
+];
+const CITY={all:['All','الكل'],jed:['Jeddah','جدة'],ruh:['Riyadh','الرياض'],khb:['Al Khobar','الخبر'],mak:['Makkah','مكة'],taf:['Taif','الطائف'],abh:['Abha','أبها']};
+const PERKS=[
+ {en:['One contract, eight centers','Service your vehicles in any of our six cities under one agreement.'],ar:['عقد واحد، ثمانية فروع','صيانة مركباتك في أي من مدننا الست بعقد واحد.']},
+ {en:['Dedicated account manager','One point of contact for scheduling, reporting and invoicing.'],ar:['مدير حساب مخصص','نقطة تواصل واحدة للمواعيد والتقارير والفواتير.']},
+ {en:['Genuine Lucas Oil','Genuine products through the exclusive distributor — no substitutes.'],ar:['زيوت لوكاس الأصلية','منتجات أصلية عن طريق الموزع الحصري — بدون بدائل.']},
+ {en:['Fleet service records','Every vehicle\'s service history, kept and shared with you.'],ar:['سجل صيانة الأسطول','سجل صيانة كل مركبة محفوظ ومشارك معك.']},
+];
+const CHAIN=[
+ {en:['Lucas Oil Products Inc.','American manufacturer of oils, additives and heavy-duty lubricants since 1989.'],ar:['لوكاس أويل','شركة أمريكية لتصنيع الزيوت والإضافات والشحوم منذ عام ١٩٨٩.']},
+ {en:['Scan Tool Line','Our parent company — the exclusive distributor of Lucas Oil in Saudi Arabia.'],ar:['خط الأجهزة · Scan Tool Line','شركتنا الأم — الموزع الحصري لزيوت لوكاس في المملكة العربية السعودية.']},
+ {en:['Auto Lube','The authorized operator of Lucas Oil service centers — eight centers across six cities.'],ar:['أوتو لوب','الوكيل المشغّل لمراكز صيانة لوكاس أويل — ثمانية فروع في ست مدن.']},
+];
+const STATS=[['1989',['Lucas Oil founded','تأسيس لوكاس أويل']],['8',['Service centers','فروع الصيانة']],['6',['Cities','مدن']],['100%',['Genuine Lucas products','منتجات لوكاس أصلية']]];
+const SECT=[['Logistics & transport','النقل والخدمات اللوجستية'],['Car rental','تأجير السيارات'],['Construction','المقاولات'],['Government','جهة حكومية'],['Delivery','التوصيل'],['Other','أخرى']];
+
+const T={
+ en:{nav1:'Services',nav2:'Products',nav3:'Centers',nav4:'For Business',visit:'Find a Center',seeP:'See the Products',kicker:'Lucas Oil · Authorized Service Operator · Saudi Arabia',herolead:'American full-synthetic oils and additives, put to work by specialists at eight Auto Lube centers across the Kingdom.',
+  manifesto:'We don\'t sell promises. We put Lucas in your engine and let the road do the talking — smoother, quieter, cooler. There\'s only one way to say it: <em>keep that engine alive.</em>',
+  cinEye:'Inside the bay',cin1:'Every Car.',cin2:'Every Visit.',cinLead:'Specialist technicians, genuine Lucas products and the right equipment — at all eight centers.',
+  sEye:'Services',sTitle:'What We Do',sLead:'From a quick oil change to computer diagnostics, A/C and programming — done in-house, with Lucas products.',
+  abEye:'About Us',abCap:'Lucas Oil · Founded in the USA',abTitle:'The Real Problem Solvers',
+  ab1:'Lucas Oil started producing oil products in <b>1989</b> and has become one of the top sellers of additives and lubricants in the United States. Its products are built for every type of engine — cars, trucks, boats and motorcycles — with a heavy-duty line for the industrial and agricultural sectors.',
+  ab2:'In Saudi Arabia, Lucas Oil comes to you through <b>Scan Tool Line</b>, the exclusive distributor, and <b>Auto Lube</b>, the authorized operator of its service centers. Our centers deploy state-of-the-art equipment for preventive maintenance, with technicians trained to care for all types of vehicles. Our customers are our main concern.',
+  pEye:'The Range',pTitle:'Lucas, Only Here.',pAgent:'The <em>authorized operator</em> of<br>Lucas Oil service centers in Saudi Arabia',
+  sgEye:'The Signature',sgTitle:'Oil Stabilizer',sgLead:'The bottle Lucas is known for. Added at every oil change, it works alongside your oil to protect the engine.',
+  gEye:'Inside Our Centers',gTitle:'Built for the Job',bEye:'Eight Centers · Six Cities',bTitle:'Find Your Center',dir:'Directions',
+  cEye:'For Business & Fleets',cTitle:'Fleets Run on Lucas',cLead:'One partner for every vehicle you operate — eight centers in six cities, genuine Lucas products and a dedicated account manager.',
+  fTitle:'Request a Corporate Contract',fSub:'Tell us about your fleet. Our business development team will get back to you.',f1:'Company name',f2:'Contact person',f3:'Phone',f4:'Work email',f5:'Fleet size',f6:'Sector',f7:'Cities of operation',f8:'Notes',fSend:'Send Request',fErr:'Please fill in company, contact, phone and a valid email.',fOk:'Opening your email app with the request ready to send.',
+  finLead:'Drive in. Feel the difference. Drive out.',foot:'© 2026 Auto Lube Co. · Lucas Oil service centers in Saudi Arabia',lang:'العربية'},
+ ar:{nav1:'الخدمات',nav2:'المنتجات',nav3:'الفروع',nav4:'للشركات',visit:'اعثر على فرع',seeP:'شاهد المنتجات',kicker:'لوكاس أويل · الوكيل المشغّل لمراكز الصيانة · المملكة العربية السعودية',herolead:'زيوت وإضافات أمريكية تخليقية بالكامل، يطبّقها مختصون في ثمانية فروع لأوتو لوب حول المملكة.',
+  manifesto:'ما نبيع وعود. نحط لوكاس في محركك ونخلي الطريق يتكلم — أنعم، أهدأ، وأبرد. وفيه طريقة وحدة نقولها فيها: <em dir="ltr">KEEP THAT ENGINE ALIVE!</em>',
+  cinEye:'داخل الورشة',cin1:'كل سيارة.',cin2:'كل زيارة.',cinLead:'فنيون مختصون، منتجات لوكاس الأصلية، والمعدات المناسبة — في فروعنا الثمانية.',
+  sEye:'الخدمات',sTitle:'وش نسوي',sLead:'من تغيير الزيت السريع إلى فحص الكمبيوتر والتكييف والبرمجة — داخل مراكزنا وبمنتجات لوكاس.',
+  abEye:'من نحن',abCap:'لوكاس أويل · تأسست في أمريكا',abTitle:'حلول حقيقية لسيارتك',
+  ab1:'بدأت لوكاس أويل إنتاج منتجاتها عام <b>١٩٨٩</b>، وصارت من أكبر بائعي الإضافات والزيوت في الولايات المتحدة. منتجاتها مصممة لكل أنواع المحركات — السيارات والشاحنات والقوارب والدراجات النارية — ولها خط للأحمال الثقيلة في القطاعين الصناعي والزراعي.',
+  ab2:'في المملكة، توصلك لوكاس أويل عن طريق <b>خط الأجهزة (Scan Tool Line)</b>، الموزع الحصري، و<b>أوتو لوب</b>، الوكيل المشغّل لمراكز الصيانة. مراكزنا مجهزة بأحدث معدات الصيانة الوقائية، وفنيونا مدربون على العناية بكل أنواع السيارات. عملاؤنا هم أولويتنا.',
+  pEye:'المنتجات',pTitle:'لوكاس، هنا فقط.',pAgent:'<em>الوكيل المشغّل</em><br>لمراكز صيانة لوكاس في المملكة',
+  sgEye:'المنتج الأشهر',sgTitle:'محسن الزيت',sgLead:'العلبة اللي تشتهر فيها لوكاس. تنضاف مع كل تغيير زيت وتشتغل مع الزيت لحماية المحرك.',
+  gEye:'داخل مراكزنا',gTitle:'مجهزة للشغل',bEye:'ثمانية فروع · ست مدن',bTitle:'اعثر على فرعك',dir:'الموقع',
+  cEye:'للشركات والأساطيل',cTitle:'الأساطيل تمشي على لوكاس',cLead:'شريك واحد لكل مركباتك — ثمانية فروع في ست مدن، منتجات لوكاس الأصلية، ومدير حساب مخصص.',
+  fTitle:'طلب عقد شركات',fSub:'أخبرنا عن أسطولك، وفريق تطوير الأعمال بيتواصل معك.',f1:'اسم الشركة',f2:'اسم المسؤول',f3:'رقم الجوال',f4:'البريد الإلكتروني',f5:'حجم الأسطول',f6:'القطاع',f7:'مدن التشغيل',f8:'ملاحظات',fSend:'إرسال الطلب',fErr:'يرجى تعبئة اسم الشركة والمسؤول والجوال وبريد صحيح.',fOk:'جارٍ فتح البريد والطلب جاهز للإرسال.',
+  finLead:'ادخل. حس بالفرق. وانطلق.',foot:'© 2026 شركة أوتو لوب · مراكز لوكاس أويل في المملكة',lang:'English'}
+};
+let L='en';try{const s=localStorage.getItem('al_lang');if(s==='ar'||s==='en')L=s}catch(e){}
+let cat='engine',filter='all';
+
+/* ===== RENDER ===== */
+function render(){
+ const t=T[L],k=L,ix=k==='en'?0:1;
+ document.documentElement.lang=L;document.documentElement.dir=L==='ar'?'rtl':'ltr';
+ document.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=t[e.dataset.i18n];e.dataset.final=t[e.dataset.i18n]});
+ document.querySelectorAll('[data-i18n-html]').forEach(e=>e.innerHTML=t[e.dataset.i18nHtml]);
+ document.getElementById('lang').textContent=t.lang;
+ const vh=Math.min(innerHeight,1000),mob=innerWidth<760;
+ document.getElementById('stage').innerHTML=LINEUP.map(b=>`<div class="bot" data-d="${b.d}"><img src="p/${b.s}.png" alt="" style="--h:${Math.round(b.h*(mob?.22:.44)*vh)}px"><img class="rf" src="p/${b.s}.png" alt="" style="--h:${Math.round(b.h*(mob?.22:.44)*vh)}px;height:var(--h)"></div>`).join('');
+ document.getElementById('chapters').innerHTML=CH.map((c,i)=>{const d=c[k];return `<div class="chapter${c.prods||c.img?'':' noimg'}">${c.prods||c.img?`<div class="media${c.prods?' prod':''}${c.img2?' duo':''}">${c.prods?`<div class="pw">${c.prods.map(p=>`<img src="p/${p}.png" alt="">`).join('')}</div>`:`<img class="mi" src="img/u/${c.img}.jpg" alt="${d.t}" decoding="async">${c.img2?`<img class="mi" src="img/u/${c.img2}.jpg" alt="${d.t}" decoding="async">`:''}`}</div>`:''}
+  <div><span class="cnum">${String(i+1).padStart(2,'0')}</span><h3 class="title disp scr">${d.t}</h3><p class="lead">${d.d}</p><ul>${d.i.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`}).join('');
+ document.getElementById('tabs').innerHTML=Object.entries(CATS).map(([c,n])=>`<button data-cat="${c}" class="${c===cat?'on':''}">${n[ix]}<i>${c==='all'?PR.length:PR.filter(p=>p.c===c).length}</i></button>`).join('');
+ document.getElementById('rail').innerHTML=PR.filter(p=>cat==='all'||p.c===cat).map(p=>{const d=p[k];return `<article class="pc"><div class="stg"><img src="p/${p.s}.png" alt="${d.n}" loading="lazy"></div><div class="bd"><div class="cat">${CATS[p.c][ix]}</div><h3 class="disp">${d.n}</h3><ul>${d.p.map(x=>`<li>${x}</li>`).join('')}</ul><div class="g">${d.g.map(x=>`<span>${x}</span>`).join('')}</div></div></article>`}).join('');
+ document.getElementById('facts').innerHTML=FACTS[k].map((f,i)=>`<div><b>${String(i+1).padStart(2,'0')}</b>${f}</div>`).join('');
+ document.getElementById('strip').innerHTML=GAL.map(g=>`<figure><img src="img/${g[0]}.jpg" alt="${g[1][ix]}" loading="lazy"><figcaption>${g[1][ix]}</figcaption></figure>`).join('');
+ document.getElementById('filters').innerHTML=Object.entries(CITY).map(([c,n])=>`<button data-c="${c}" class="${c===filter?'on':''}">${n[ix]}</button>`).join('');
+ document.getElementById('blist').innerHTML=BR.map((b,i)=>({...b,i})).filter(b=>filter==='all'||b.c===filter).map(b=>`<div class="branch"><div class="n">${String(b.i+1).padStart(2,'0')}</div><div class="c disp">${b[k][0]}</div><div class="d">${b[k][1]}</div><a href="${b.u}" target="_blank" rel="noopener">${t.dir} ↗</a></div>`).join('');
+ document.getElementById('chain').innerHTML=CHAIN.map((c,i)=>`<div><b>${String(i+1).padStart(2,'0')}</b><div><h4>${c[k][0]}</h4><p>${c[k][1]}</p></div></div>`).join('');
+ document.getElementById('stats').innerHTML=STATS.map(x=>`<div><strong>${x[0]}</strong><span>${x[1][ix]}</span></div>`).join('');
+ document.getElementById('perks').innerHTML=PERKS.map((p,i)=>`<div class="perk"><b>${String(i+1).padStart(2,'0')}</b><div><h4>${p[k][0]}</h4><p>${p[k][1]}</p></div></div>`).join('');
+ document.getElementById('sector').innerHTML=SECT.map(s=>`<option>${s[ix]}</option>`).join('');
+ document.getElementById('cities').innerHTML=Object.entries(CITY).filter(([c])=>c!=='all').map(([c,n])=>`<label><input type="checkbox" value="${n[0]}">${n[ix]}</label>`).join('');
+ splitManifesto();
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('#filters button');if(b){filter=b.dataset.c;render();bindScroll();return}
+ const c=e.target.closest('#tabs button');if(c){cat=c.dataset.cat;render();bindScroll();document.getElementById('rail').scrollLeft=0;gsap.from('.pc',{opacity:0,y:40,stagger:.06,duration:.7,ease:'power3.out'})}
+});
+document.getElementById('lang').onclick=()=>{L=L==='en'?'ar':'en';try{localStorage.setItem('al_lang',L)}catch(e){}render();bindScroll();heroIdle();ScrollTrigger.refresh()};
+const rail=()=>document.getElementById('rail');
+document.getElementById('rr').onclick=()=>rail().scrollBy({left:(L==='ar'?-1:1)*380,behavior:'smooth'});
+document.getElementById('rl').onclick=()=>rail().scrollBy({left:(L==='ar'?1:-1)*380,behavior:'smooth'});
+
+function splitManifesto(){const p=document.getElementById('mtext');
+ const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(w=>{if(/^\s+$/.test(w)||!w)f.append(w);else{const s=document.createElement('span');s.className='w';s.textContent=w;f.append(s)}});c.replaceWith(f)}else walk(c)})};walk(p)}
+
+const GLY='ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&*/0123456789';
+function scramble(el){const fin=el.dataset.final||el.textContent;
+ if(L==='ar'){gsap.fromTo(el,{opacity:0,y:30,filter:'blur(8px)'},{opacity:1,y:0,filter:'blur(0px)',duration:1.1,ease:'power3.out'});return}
+ const D=500+fin.length*45,t0=performance.now();cancelAnimationFrame(el._r);clearTimeout(el._t);
+ const step=now=>{const p=Math.min((now-t0)/D,1),rev=p*fin.length*1.15-fin.length*.15;
+  el.textContent=p>=1?fin:fin.split('').map((ch,i)=>ch===' '?' ':(i<rev?ch:GLY[Math.random()*GLY.length|0])).join('');
+  if(p<1)el._r=requestAnimationFrame(step)};el._r=requestAnimationFrame(step);el._t=setTimeout(()=>{cancelAnimationFrame(el._r);el.textContent=fin},D+400)}
+
+/* ===== SCROLL ===== */
+let trig=[];
+function bindScroll(){
+ trig.forEach(t=>t&&t.kill());trig=[];const add=a=>trig.push(a.scrollTrigger||a);
+ document.querySelectorAll('.scr').forEach(el=>{if(el.closest('#hero'))return;trig.push(ScrollTrigger.create({trigger:el,start:'top 88%',onEnter:()=>scramble(el)}))});
+ // hero: dolly-in on scroll
+ add(gsap.to('#stage',{scale:1.35,yPercent:18,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}}));
+ add(gsap.to('#word',{yPercent:-40,opacity:.15,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}}));
+ add(gsap.to('#mtext .w',{opacity:1,stagger:.05,ease:'none',scrollTrigger:{trigger:'#manifesto',start:'top 70%',end:'bottom 75%',scrub:true}}));
+ // cinema: slow push-in
+ add(gsap.fromTo('#cin1 .ph',{scale:1.35},{scale:1,ease:'none',scrollTrigger:{trigger:'#cin1',start:'top bottom',end:'bottom bottom',scrub:true}}));
+ add(gsap.from('#cin1 .txt',{y:80,opacity:0,ease:'none',scrollTrigger:{trigger:'#cin1',start:'top 20%',end:'top -30%',scrub:true}}));
+ // chapters
+ document.querySelectorAll('.media').forEach(m=>{
+  add(gsap.fromTo(m,{clipPath:'inset(14% 14% 14% 14%)'},{clipPath:'inset(0% 0% 0% 0%)',ease:'none',scrollTrigger:{trigger:m,start:'top 90%',end:'top 35%',scrub:true}}));
+  add(gsap.fromTo(m.querySelectorAll('.mi,.pw'),{scale:m.classList.contains('prod')?.88:1.12},{scale:1,ease:'none',scrollTrigger:{trigger:m,start:'top bottom',end:'center 60%',scrub:true}}))});
+ document.querySelectorAll('.chapter .lead,.chapter li').forEach(el=>add(gsap.from(el,{opacity:0,y:26,duration:.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 94%'}})));
+ add(gsap.from('.pc',{opacity:0,y:60,stagger:.08,duration:1,ease:'power3.out',scrollTrigger:{trigger:'#rail',start:'top 85%'}}));
+ // signature
+ add(gsap.fromTo('#sigimg',{y:120,rotate:-8,scale:.85},{y:0,rotate:0,scale:1,ease:'none',scrollTrigger:{trigger:'#signature',start:'top bottom',end:'top 25%',scrub:true}}));
+ add(gsap.from('#facts div',{opacity:0,x:L==='ar'?-40:40,stagger:.12,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#facts',start:'top 85%'}}));
+ // centers horizontal
+ const strip=document.getElementById('strip');
+ add(gsap.to(strip,{x:()=>{const d=strip.scrollWidth-innerWidth;return L==='ar'?d:-d},ease:'none',scrollTrigger:{trigger:'#centers',start:'top top',end:'bottom bottom',scrub:true,invalidateOnRefresh:true}}));
+ strip.querySelectorAll('img').forEach(im=>add(gsap.fromTo(im,{scale:1.25},{scale:1.02,ease:'none',scrollTrigger:{trigger:'#centers',start:'top top',end:'bottom bottom',scrub:true}})));
+ add(gsap.from('.branch',{opacity:0,x:L==='ar'?40:-40,stagger:.07,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#blist',start:'top 88%'}}));
+}
+function finaleBars(){gsap.fromTo('#finale .bars i',{yPercent:100},{yPercent:0,stagger:.12,ease:'none',scrollTrigger:{trigger:'#finale',start:'top bottom',end:'top 25%',scrub:true}})}
+
+/* hero mouse parallax */
+let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+function heroIdle(){document.querySelectorAll('.bot').forEach((b,i)=>gsap.to(b,{y:-8,duration:2.4+i*.3,yoyo:true,repeat:-1,ease:'sine.inOut',delay:i*.2}))}
+gsap.ticker.add(()=>{document.querySelectorAll('.bot').forEach(b=>{const d=+b.dataset.d;gsap.set(b,{x:mx*-40*d,rotateY:mx*12*d})});gsap.set('#beam',{x:mx*30})});
+
+addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('solid',scrollY>40),{passive:true});
+
+/* form */
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();const f=e.target,t=T[L],m=document.getElementById('fmsg'),v=n=>f[n].value.trim();
+ if(!v('company')||!v('contact')||!v('phone')||!/^\S+@\S+\.\S+$/.test(v('email'))){m.style.color='#E8173F';m.textContent=t.fErr;return}
+ const cities=[...f.querySelectorAll('#cities input:checked')].map(i=>i.value).join(', ')||'-';
+ const body=`Company: ${v('company')}\nContact: ${v('contact')}\nPhone: ${v('phone')}\nEmail: ${v('email')}\nFleet size: ${f.fleet.value}\nSector: ${f.sector.value}\nCities: ${cities}\nNotes: ${v('notes')||'-'}`;
+ m.style.color='';m.textContent=t.fOk;
+ location.href=`mailto:M.Nasser@lucasoil.sa?subject=${encodeURIComponent('Corporate Contract Request — '+v('company'))}&body=${encodeURIComponent(body)}`});
+
+/* ===== INTRO ===== */
+render();gsap.registerPlugin(ScrollTrigger);
+const tl=gsap.timeline();
+tl.to('#loader .s1',{left:'110vw',duration:1.1,ease:'expo.inOut'})
+  .to('#loader .s2',{left:'110vw',duration:1.1,ease:'expo.inOut'},'<.1')
+  .to('#loader .s3',{left:'110vw',duration:1.1,ease:'expo.inOut'},'<.1')
+  .to('#loader img',{opacity:1,duration:.5},'<.2')
+  .to('#loader img',{opacity:0,scale:.9,duration:.4},'+=.3')
+  .to('#loader',{clipPath:'inset(0 0 100% 0)',duration:.9,ease:'expo.inOut'})
+  .set('#loader',{display:'none'})
+  .to('#beam',{opacity:1,duration:1.4,ease:'power2.out'},'-=.5')
+  .from('.bot',{y:220,opacity:0,stagger:{each:.12,from:'center'},duration:1.3,ease:'expo.out'},'<')
+  .to('#wordf',{clipPath:'inset(0 0% 0 0)',duration:1.2,ease:'expo.inOut'},'<.6')
+  .from('.hero-bot>*,nav',{opacity:0,y:20,stagger:.1,duration:.9,ease:'power3.out'},'<.3')
+  .add(()=>{heroIdle();bindScroll();finaleBars()});
+</script>
+</body>
+</html>
